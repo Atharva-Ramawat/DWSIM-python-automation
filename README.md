@@ -20,4 +20,4 @@ The suite programmatically constructs chemical flowsheets, performs multi-variab
 ## ⚙️ Installation & Setup
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/Atharva-Ramawat/DWSIM-python-automation.git](https://github.com/Atharva-Ramawat/DWSIM-python-automation.git)
+   git clone https://github.com/Atharva-Ramawat/DWSIM-python-automation.git
