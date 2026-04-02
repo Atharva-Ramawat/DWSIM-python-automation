@@ -1,37 +1,37 @@
 timestamp,part,case_id,volume_m3,feed_temp_K,n_stages,feed_stage,reflux_ratio,distillate_rate,success,error,conversion,outlet_nC5_molflow,outlet_iC5_molflow,heat_duty_W,outlet_temp_K,distillate_iC5_purity,bottoms_nC5_purity,condenser_duty_W,reboiler_duty_W
-2026-04-02T23:13:03.079720,PFR,1,0.5,350.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.083720,PFR,2,0.5,380.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.088235,PFR,3,0.5,410.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.092238,PFR,4,0.5,440.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.096236,PFR,5,1.0,350.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.100236,PFR,6,1.0,380.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.107239,PFR,7,1.0,410.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.111237,PFR,8,1.0,440.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.115235,PFR,9,2.0,350.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.119235,PFR,10,2.0,380.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.123236,PFR,11,2.0,410.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.128234,PFR,12,2.0,440.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.131235,PFR,13,5.0,350.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.135236,PFR,14,5.0,380.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.139245,PFR,15,5.0,410.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.144247,PFR,16,5.0,440.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.148245,PFR,17,10.0,350.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.152749,PFR,18,10.0,380.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.156758,PFR,19,10.0,410.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.160757,PFR,20,10.0,440.0,,,,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.175757,Distillation,21,,,10,,1.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.179760,Distillation,22,,,10,,1.5,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.183758,Distillation,23,,,10,,2.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.187758,Distillation,24,,,10,,3.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.191759,Distillation,25,,,15,,1.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.196758,Distillation,26,,,15,,1.5,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.200758,Distillation,27,,,15,,2.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.204756,Distillation,28,,,15,,3.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.208758,Distillation,29,,,20,,1.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.213263,Distillation,30,,,20,,1.5,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.217271,Distillation,31,,,20,,2.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.221271,Distillation,32,,,20,,3.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.225269,Distillation,33,,,25,,1.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.230270,Distillation,34,,,25,,1.5,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.236271,Distillation,35,,,25,,2.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
-2026-04-02T23:13:03.240429,Distillation,36,,,25,,3.0,,False,No method matches given arguments for IFlowsheet.AddPropertyPackage: (<class 'str'>),,,,,,,,,
+2026-04-03T00:53:35.675897,PFR,1,0.5,350.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.695706,PFR,2,0.5,380.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.703724,PFR,3,0.5,410.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.710941,PFR,4,0.5,440.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.718486,PFR,5,1.0,350.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.729487,PFR,6,1.0,380.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.736486,PFR,7,1.0,410.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.745007,PFR,8,1.0,440.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.756373,PFR,9,2.0,350.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.770725,PFR,10,2.0,380.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.779112,PFR,11,2.0,410.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.788113,PFR,12,2.0,440.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.804206,PFR,13,5.0,350.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.812206,PFR,14,5.0,380.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.820728,PFR,15,5.0,410.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.830721,PFR,16,5.0,440.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.838738,PFR,17,10.0,350.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.846739,PFR,18,10.0,380.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.854737,PFR,19,10.0,410.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.865198,PFR,20,10.0,440.0,,,,,True,,nan,nan,nan,nan,298.15,,,,
+2026-04-03T00:53:35.939937,Distillation,21,,,10,8,1.0,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:35.947937,Distillation,22,,,10,8,1.5,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:35.958938,Distillation,23,,,10,8,2.0,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:35.966938,Distillation,24,,,10,8,3.0,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:35.974971,Distillation,25,,,15,8,1.0,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:35.986070,Distillation,26,,,15,8,1.5,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:35.994514,Distillation,27,,,15,8,2.0,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:36.001515,Distillation,28,,,15,8,3.0,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:36.010519,Distillation,29,,,20,8,1.0,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:36.021049,Distillation,30,,,20,8,1.5,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:36.028049,Distillation,31,,,20,8,2.0,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:36.036050,Distillation,32,,,20,8,3.0,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:36.044056,Distillation,33,,,25,8,1.0,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:36.066118,Distillation,34,,,25,8,1.5,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:36.084511,Distillation,35,,,25,8,2.0,0.5,True,,,,,,,nan,nan,0.0,0.0
+2026-04-03T00:53:36.093525,Distillation,36,,,25,8,3.0,0.5,True,,,,,,,nan,nan,0.0,0.0

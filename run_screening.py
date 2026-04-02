@@ -21,6 +21,10 @@ import itertools
 import logging
 from datetime import datetime
 
+# ── Safe Path Setup ──────────────────────────────────────────────────────────
+# Guarantees outputs are saved next to the script, even after changing directories
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # ── Optional: matplotlib for plots (won't crash if unavailable) ─────────────
 try:
     import matplotlib
@@ -36,7 +40,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler("run_screening.log", mode="w"),
+        logging.FileHandler(os.path.join(SCRIPT_DIR, "run_screening.log"), mode="w"),
     ],
 )
 log = logging.getLogger(__name__)
@@ -81,6 +85,7 @@ def load_dwsim(dwsim_path: str):
             "pythonnet is not installed. Run:  pip install pythonnet"
         )
 
+    # Change directory so DWSIM finds its thermo files
     os.chdir(dwsim_path)
     sys.path.append(dwsim_path)
     import clr as clr_inner
@@ -157,7 +162,6 @@ def _cast_to_stream(sim, stream_name: str):
     return generic_obj
 
 def _set_enum(obj, prop_name, int_val):
-    """API FIX: pythonnet 3.0+ requires explicit Enum casting."""
     import System
     try:
         current_val = getattr(obj, prop_name)
@@ -168,7 +172,6 @@ def _set_enum(obj, prop_name, int_val):
         setattr(obj, prop_name, int_val)
 
 def _ot(name: str):
-    """API FIX: Smart search to find the exact Enum name in DWSIM 8."""
     from DWSIM.Interfaces.Enums.GraphicObjects import ObjectType
     import System
     try:
@@ -180,12 +183,11 @@ def _ot(name: str):
                 return System.Enum.Parse(ObjectType, n, True)
         if name == "PFR":
             for n in names:
-                if "plugflow" in n.lower():
+                if "plugflow" in n.lower() or "rct_pfr" in n.lower():
                     return System.Enum.Parse(ObjectType, n, True)
         raise ValueError(f"Could not find {name} in {list(names)}")
 
 def _connect(sim, obj1_name: str, obj2_name: str, port1: int, port2: int):
-    """API FIX: ConnectObjects demands the GraphicObject, not the math model."""
     go1 = sim.GetFlowsheetSimulationObject(obj1_name).GraphicObject
     go2 = sim.GetFlowsheetSimulationObject(obj2_name).GraphicObject
     sim.ConnectObjects(go1, go2, port1, port2)
@@ -197,6 +199,7 @@ def _connect(sim, obj1_name: str, obj2_name: str, port1: int, port2: int):
 
 def build_pfr_flowsheet(interf, volume_m3: float, feed_temp_K: float):
     import System 
+    from System.Collections.Generic import Dictionary
 
     sim = interf.CreateFlowsheet()
 
@@ -206,10 +209,15 @@ def build_pfr_flowsheet(interf, volume_m3: float, feed_temp_K: float):
     for c in ["n-Pentane", "Isopentane"]:
         sim.AddCompound(c)
 
-    # ── Safe Enum Parsing ──
     sim.AddObject(_ot("MaterialStream"), 100, 300, "FEED")
     sim.AddObject(_ot("MaterialStream"), 600, 300, "PRODUCT")
-    sim.AddObject(_ot("PFR"), 350, 300, "PFR1")
+    
+    try:
+        pfr_type = _ot("RCT_PFR")
+    except Exception:
+        pfr_type = _ot("PFR")
+        
+    sim.AddObject(pfr_type, 350, 300, "PFR1")
 
     feed_obj = _cast_to_stream(sim, "FEED")
     composition = System.Array[float]([1.0, 0.0])
@@ -221,22 +229,37 @@ def build_pfr_flowsheet(interf, volume_m3: float, feed_temp_K: float):
 
     pfr_obj = sim.GetFlowsheetSimulationObject("PFR1").GetAsObject()
     pfr_obj.Volume = volume_m3
-    pfr_obj.Isothermal = True
-    pfr_obj.IsothermalTemperature = feed_temp_K          
+    
+    try:
+        pfr_obj.Isothermal = True
+        pfr_obj.IsothermalTemperature = feed_temp_K          
+    except Exception:
+        pass
 
-    rxn = pfr_obj.AddReaction()
-    rxn.Name = "nC5_isoC5"
-    _set_enum(rxn, "ReactionType", 0)                                  
-    _set_enum(rxn, "KineticExpression", 0)                             
+    comps = Dictionary[System.String, System.Double]()
+    comps.Add("n-Pentane", -1.0)
+    comps.Add("Isopentane", 1.0)
 
-    rxn.AddComponent("n-Pentane", -1.0)
-    rxn.AddComponent("Isopentane", 1.0)
+    dorders = Dictionary[System.String, System.Double]()
+    dorders.Add("n-Pentane", 1.0)
+    dorders.Add("Isopentane", 0.0)
 
-    rxn.PreExponentialFactor = 1.0e6                      
-    rxn.ActivationEnergy = 80000.0                        
-    rxn.ReactionOrder = 1.0
+    rorders = Dictionary[System.String, System.Double]()
+    rorders.Add("n-Pentane", 0.0)
+    rorders.Add("Isopentane", 0.0)
 
-    # ── Safe Graphic Connections ──
+    kr1 = sim.CreateKineticReaction(
+        "nC5_isoC5", "Isomerization", 
+        comps, dorders, rorders, 
+        "n-Pentane", "Mixture", 
+        "Molar Concentration", "mol/m3", "mol/[m3.s]", 
+        1.0e6, 80000.0, 0.0, 0.0, "", ""
+    )
+
+    sim.AddReaction(kr1)
+    sim.AddReactionToSet(kr1.ID, "DefaultSet", True, 0)
+    pfr_obj.ReactionSet = "DefaultSet"
+
     _connect(sim, "FEED", "PFR1", -1, -1)
     _connect(sim, "PFR1", "PRODUCT", -1, -1)
 
@@ -244,7 +267,6 @@ def build_pfr_flowsheet(interf, volume_m3: float, feed_temp_K: float):
 
 
 def extract_pfr_results(interf, sim, volume_m3: float, feed_temp_K: float) -> dict:
-    """Run the PFR flowsheet and extract KPIs."""
     result = {
         "part": "PFR",
         "volume_m3": volume_m3,
@@ -258,7 +280,6 @@ def extract_pfr_results(interf, sim, volume_m3: float, feed_temp_K: float) -> di
         "outlet_temp_K": float("nan"),
     }
     try:
-        # ── API FIX: Use interf for correct calculation ──
         if hasattr(interf, 'CalculateFlowsheet2'):
             interf.CalculateFlowsheet2(sim)
         else:
@@ -305,7 +326,6 @@ def build_distil_flowsheet(interf, n_stages: int, feed_stage: int,
     for c in ["n-Pentane", "Isopentane"]:
         sim.AddCompound(c)
 
-    # ── Safe Enum Parsing ──
     sim.AddObject(_ot("MaterialStream"), 100, 300, "FEED_D")
     sim.AddObject(_ot("MaterialStream"), 600, 200, "DISTILLATE")
     sim.AddObject(_ot("MaterialStream"), 600, 400, "BOTTOMS")
@@ -328,7 +348,6 @@ def build_distil_flowsheet(interf, n_stages: int, feed_stage: int,
     _set_enum(col_obj, "CondenserType", 0)    
     _set_enum(col_obj, "ReboilerType", 0)    
 
-    # ── Safe Graphic Connections ──
     _connect(sim, "FEED_D", "COL1", -1, 0)   
     _connect(sim, "COL1", "DISTILLATE", 0, -1)   
     _connect(sim, "COL1", "BOTTOMS", 1, -1)   
@@ -352,7 +371,6 @@ def extract_distil_results(interf, sim, n_stages, feed_stage, reflux_ratio,
         "reboiler_duty_W": float("nan"),
     }
     try:
-        # ── API FIX: Use interf for correct calculation ──
         if hasattr(interf, 'CalculateFlowsheet2'):
             interf.CalculateFlowsheet2(sim)
         else:
@@ -404,7 +422,9 @@ CSV_FIELDNAMES = [
     "condenser_duty_W", "reboiler_duty_W",
 ]
 
-def write_csv(rows: list, path: str = "results.csv"):
+def write_csv(rows: list, filename: str = "results.csv"):
+    # Guarantee the file goes to the original script directory
+    path = os.path.join(SCRIPT_DIR, filename)
     with open(path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES, extrasaction="ignore")
         writer.writeheader()
@@ -451,8 +471,13 @@ def make_plots(all_results: list):
             axes[1].plot(temps2, conv, marker="s", label=f"V={vol} m³", color=color)
 
         axes[1].set_xlabel("Feed Temperature (K)"); axes[1].set_ylabel("n-C5 Conversion"); axes[1].legend(); axes[1].grid(True, alpha=0.3)
-        plt.tight_layout(); plt.savefig("pfr_sweep.png", dpi=150, bbox_inches="tight"); plt.close()
-        log.info("Saved pfr_sweep.png")
+        plt.tight_layout()
+        
+        # Guarantee output path
+        pfr_path = os.path.join(SCRIPT_DIR, "pfr_sweep.png")
+        plt.savefig(pfr_path, dpi=150, bbox_inches="tight")
+        plt.close()
+        log.info(f"Saved {pfr_path}")
 
     if dist_rows:
         fig, axes = plt.subplots(1, 2, figsize=(12, 5))
@@ -476,8 +501,13 @@ def make_plots(all_results: list):
             axes[1].plot(rr, pur, marker="s", label=f"N={ns} stages", color=color)
 
         axes[1].set_xlabel("Reflux Ratio (L/D)"); axes[1].set_ylabel("n-C5 Purity in Bottoms (mol frac)"); axes[1].legend(); axes[1].grid(True, alpha=0.3)
-        plt.tight_layout(); plt.savefig("distil_sweep.png", dpi=150, bbox_inches="tight"); plt.close()
-        log.info("Saved distil_sweep.png")
+        plt.tight_layout()
+        
+        # Guarantee output path
+        distil_path = os.path.join(SCRIPT_DIR, "distil_sweep.png")
+        plt.savefig(distil_path, dpi=150, bbox_inches="tight")
+        plt.close()
+        log.info(f"Saved {distil_path}")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -505,7 +535,6 @@ def main():
         log.info(f"  Case {case_id}: V={volume} m³, T={temp} K")
         try:
             sim = build_pfr_flowsheet(interf, volume, temp)
-            # ── API FIX: pass interf to extractor ──
             row = extract_pfr_results(interf, sim, volume, temp)
         except Exception as exc:
             log.error(f"  Case {case_id} build/extract ERROR: {exc}\n{traceback.format_exc()}")
@@ -529,7 +558,6 @@ def main():
             sim = build_distil_flowsheet(
                 interf, n_stages, feed_stage, reflux, DISTIL_DISTILLATE_RATE
             )
-            # ── API FIX: pass interf to extractor ──
             row = extract_distil_results(
                 interf, sim, n_stages, feed_stage, reflux, DISTIL_DISTILLATE_RATE
             )
