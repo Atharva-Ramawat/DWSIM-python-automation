@@ -2,7 +2,7 @@
 FOSSEE Summer Fellowship 2026 - DWSIM Python Automation Screening Task
 Task 1: Python Automation of DWSIM
 
-Author: [Your Name]
+Author: Atharva Ramawat
 Description:
     This script uses the DWSIM Automation API (via pythonnet / DWSIM's COM interface)
     to programmatically:
@@ -53,8 +53,8 @@ def find_dwsim_path():
         r"C:\Program Files (x86)\DWSIM8",
         r"C:\Users\Public\DWSIM7",
         r"C:\Program Files\DWSIM7",
+        r"C:\Users\athar\AppData\Local\DWSIM", # Confirmed path
         os.environ.get("DWSIM_HOME", ""),
-        # Linux / macOS via Mono
         "/opt/dwsim8",
         "/usr/local/dwsim8",
         os.path.expanduser("~/dwsim8"),
@@ -75,13 +75,13 @@ def load_dwsim(dwsim_path: str):
     Returns the automation object used to create flowsheets.
     """
     try:
-        import clr  # noqa: F401  (pythonnet)
+        import clr  
     except ImportError:
         raise ImportError(
             "pythonnet is not installed. Run:  pip install pythonnet"
         )
 
-    # Add DWSIM assemblies to the CLR search path
+    os.chdir(dwsim_path)
     sys.path.append(dwsim_path)
     import clr as clr_inner
 
@@ -108,40 +108,87 @@ def load_dwsim(dwsim_path: str):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 2.  HELPER – UNIT CONVERSIONS & SAFE GETTERS
+# 2.  HELPER – UNIT CONVERSIONS, SAFE GETTERS & OBJECT CASTING
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _safe(val, default=float("nan")):
-    """Return val, or default if val is None / raises."""
     try:
         return float(val) if val is not None else default
     except Exception:
         return default
 
-
 def _mol_frac(stream, compound_name: str) -> float:
-    """Return mole fraction of compound_name in stream (0–1)."""
     try:
-        phases = stream.Phases
-        # Phase 0 = overall mixture
+        phases = stream.GetPhases() 
         comps = phases[0].Compounds
         if compound_name in comps:
             return _safe(comps[compound_name].MoleFraction.GetValueOrDefault())
         return float("nan")
     except Exception:
-        return float("nan")
-
+        try:
+            phases = stream.Phases
+            comps = phases[0].Compounds
+            if compound_name in comps:
+                return _safe(comps[compound_name].MoleFraction.GetValueOrDefault())
+            return float("nan")
+        except:
+             return float("nan")
 
 def _molar_flow(stream, compound_name: str) -> float:
-    """Return molar flow of compound_name [mol/s] in stream."""
     try:
-        phases = stream.Phases
+        phases = stream.GetPhases() 
         comps = phases[0].Compounds
         if compound_name in comps:
             return _safe(comps[compound_name].MolarFlow.GetValueOrDefault())
         return float("nan")
     except Exception:
-        return float("nan")
+        try:
+            phases = stream.Phases
+            comps = phases[0].Compounds
+            if compound_name in comps:
+                return _safe(comps[compound_name].MolarFlow.GetValueOrDefault())
+            return float("nan")
+        except:
+             return float("nan")
+
+def _cast_to_stream(sim, stream_name: str):
+    generic_obj = sim.GetFlowsheetSimulationObject(stream_name)
+    generic_obj = generic_obj.GetAsObject() 
+    return generic_obj
+
+def _set_enum(obj, prop_name, int_val):
+    """API FIX: pythonnet 3.0+ requires explicit Enum casting."""
+    import System
+    try:
+        current_val = getattr(obj, prop_name)
+        enum_type = current_val.GetType()
+        enum_val = System.Enum.ToObject(enum_type, int_val)
+        setattr(obj, prop_name, enum_val)
+    except Exception:
+        setattr(obj, prop_name, int_val)
+
+def _ot(name: str):
+    """API FIX: Smart search to find the exact Enum name in DWSIM 8."""
+    from DWSIM.Interfaces.Enums.GraphicObjects import ObjectType
+    import System
+    try:
+        return System.Enum.Parse(ObjectType, name, True)
+    except Exception:
+        names = System.Enum.GetNames(ObjectType)
+        for n in names:
+            if name.lower() in n.lower():
+                return System.Enum.Parse(ObjectType, n, True)
+        if name == "PFR":
+            for n in names:
+                if "plugflow" in n.lower():
+                    return System.Enum.Parse(ObjectType, n, True)
+        raise ValueError(f"Could not find {name} in {list(names)}")
+
+def _connect(sim, obj1_name: str, obj2_name: str, port1: int, port2: int):
+    """API FIX: ConnectObjects demands the GraphicObject, not the math model."""
+    go1 = sim.GetFlowsheetSimulationObject(obj1_name).GraphicObject
+    go2 = sim.GetFlowsheetSimulationObject(obj2_name).GraphicObject
+    sim.ConnectObjects(go1, go2, port1, port2)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -149,68 +196,54 @@ def _molar_flow(stream, compound_name: str) -> float:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def build_pfr_flowsheet(interf, volume_m3: float, feed_temp_K: float):
-    """
-    Create a DWSIM flowsheet containing:
-        Feed stream → PFR (isomerization n-C5 → i-C5) → Product stream
-
-    Returns the flowsheet object (IFlowsheet).
-    """
-    from DWSIM.Automation import Automation3          # type: ignore
-    from System import String                          # type: ignore  # noqa
+    import System 
 
     sim = interf.CreateFlowsheet()
 
-    # ── Property Package: Peng-Robinson ──────────────────────────────────────
-    pp_name = "Peng-Robinson"
-    sim.AddPropertyPackage(pp_name)
+    pp_name = "Peng-Robinson (PR)"
+    sim.CreateAndAddPropertyPackage(pp_name)
 
-    # ── Compounds ─────────────────────────────────────────────────────────────
     for c in ["n-Pentane", "Isopentane"]:
         sim.AddCompound(c)
 
-    # ── Material Streams ──────────────────────────────────────────────────────
-    feed = sim.AddObject("MaterialStream", 100, 300, "FEED")
-    prod = sim.AddObject("MaterialStream", 600, 300, "PRODUCT")
+    # ── Safe Enum Parsing ──
+    sim.AddObject(_ot("MaterialStream"), 100, 300, "FEED")
+    sim.AddObject(_ot("MaterialStream"), 600, 300, "PRODUCT")
+    sim.AddObject(_ot("PFR"), 350, 300, "PFR1")
 
-    # Feed conditions
-    feed_obj = sim.GetFlowsheetSimulationObject("FEED")
-    feed_obj.SetOverallComposition([1.0, 0.0])           # pure n-C5
+    feed_obj = _cast_to_stream(sim, "FEED")
+    composition = System.Array[float]([1.0, 0.0])
+    feed_obj.SetOverallComposition(composition)           
     feed_obj.SetTemperature(feed_temp_K)
-    feed_obj.SetPressure(101325.0)                        # 1 atm [Pa]
-    feed_obj.SetMassFlow(1.0)                             # 1 kg/s basis
-    feed_obj.SpecType = 0                                 # T, P spec
+    feed_obj.SetPressure(101325.0)                        
+    feed_obj.SetMassFlow(1.0)                             
+    _set_enum(feed_obj, "SpecType", 0)                               
 
-    # ── PFR Unit Operation ────────────────────────────────────────────────────
-    pfr = sim.AddObject("PFR", 350, 300, "PFR1")
-    pfr_obj = sim.GetFlowsheetSimulationObject("PFR1")
-
+    pfr_obj = sim.GetFlowsheetSimulationObject("PFR1").GetAsObject()
     pfr_obj.Volume = volume_m3
     pfr_obj.Isothermal = True
-    pfr_obj.IsothermalTemperature = feed_temp_K          # same as feed
+    pfr_obj.IsothermalTemperature = feed_temp_K          
 
-    # Kinetics: first-order isomerization  r = k·C_nC5
-    # k = A·exp(-Ea/RT),  A=1e6 s⁻¹,  Ea=80 kJ/mol  (literature-based estimate)
     rxn = pfr_obj.AddReaction()
     rxn.Name = "nC5_isoC5"
-    rxn.ReactionType = 0                                  # kinetic
-    rxn.KineticExpression = 0                             # power law
+    _set_enum(rxn, "ReactionType", 0)                                  
+    _set_enum(rxn, "KineticExpression", 0)                             
 
-    # Reactants / products
     rxn.AddComponent("n-Pentane", -1.0)
     rxn.AddComponent("Isopentane", 1.0)
 
-    rxn.PreExponentialFactor = 1.0e6                      # A  [1/s]
-    rxn.ActivationEnergy = 80000.0                        # Ea [J/mol]
+    rxn.PreExponentialFactor = 1.0e6                      
+    rxn.ActivationEnergy = 80000.0                        
     rxn.ReactionOrder = 1.0
 
-    # ── Connections ──────────────────────────────────────────────────────────
-    sim.ConnectObjects(feed, pfr, -1, -1)
-    sim.ConnectObjects(pfr, prod, -1, -1)
+    # ── Safe Graphic Connections ──
+    _connect(sim, "FEED", "PFR1", -1, -1)
+    _connect(sim, "PFR1", "PRODUCT", -1, -1)
 
     return sim
 
 
-def extract_pfr_results(sim, volume_m3: float, feed_temp_K: float) -> dict:
+def extract_pfr_results(interf, sim, volume_m3: float, feed_temp_K: float) -> dict:
     """Run the PFR flowsheet and extract KPIs."""
     result = {
         "part": "PFR",
@@ -225,11 +258,15 @@ def extract_pfr_results(sim, volume_m3: float, feed_temp_K: float) -> dict:
         "outlet_temp_K": float("nan"),
     }
     try:
-        sim.SolveFlowsheet()
+        # ── API FIX: Use interf for correct calculation ──
+        if hasattr(interf, 'CalculateFlowsheet2'):
+            interf.CalculateFlowsheet2(sim)
+        else:
+            sim.RequestCalculation()
 
-        prod_obj = sim.GetFlowsheetSimulationObject("PRODUCT")
-        pfr_obj  = sim.GetFlowsheetSimulationObject("PFR1")
-        feed_obj = sim.GetFlowsheetSimulationObject("FEED")
+        prod_obj = _cast_to_stream(sim, "PRODUCT")
+        pfr_obj  = sim.GetFlowsheetSimulationObject("PFR1").GetAsObject()
+        feed_obj = _cast_to_stream(sim, "FEED")
 
         f_nC5_in  = _molar_flow(feed_obj, "n-Pentane")
         f_nC5_out = _molar_flow(prod_obj, "n-Pentane")
@@ -258,59 +295,49 @@ def extract_pfr_results(sim, volume_m3: float, feed_temp_K: float) -> dict:
 
 def build_distil_flowsheet(interf, n_stages: int, feed_stage: int,
                             reflux_ratio: float, distillate_rate: float):
-    """
-    Create a DWSIM flowsheet containing:
-        Feed → Distillation Column → Distillate + Bottoms
+    import System 
 
-    n_stages        – total equilibrium stages (including condenser & reboiler)
-    feed_stage      – stage number for feed entry (1-indexed from top)
-    reflux_ratio    – L/D (external reflux ratio)
-    distillate_rate – molar distillate-to-feed ratio [mol/mol]
-    """
     sim = interf.CreateFlowsheet()
 
-    pp_name = "Peng-Robinson"
-    sim.AddPropertyPackage(pp_name)
+    pp_name = "Peng-Robinson (PR)"
+    sim.CreateAndAddPropertyPackage(pp_name)
 
     for c in ["n-Pentane", "Isopentane"]:
         sim.AddCompound(c)
 
-    # Streams
-    feed = sim.AddObject("MaterialStream", 100, 300, "FEED_D")
-    dist = sim.AddObject("MaterialStream", 600, 200, "DISTILLATE")
-    bott = sim.AddObject("MaterialStream", 600, 400, "BOTTOMS")
+    # ── Safe Enum Parsing ──
+    sim.AddObject(_ot("MaterialStream"), 100, 300, "FEED_D")
+    sim.AddObject(_ot("MaterialStream"), 600, 200, "DISTILLATE")
+    sim.AddObject(_ot("MaterialStream"), 600, 400, "BOTTOMS")
+    sim.AddObject(_ot("DistillationColumn"), 350, 300, "COL1")
 
-    feed_obj = sim.GetFlowsheetSimulationObject("FEED_D")
-    feed_obj.SetOverallComposition([0.5, 0.5])            # equimolar n-C5/i-C5
-    feed_obj.SetTemperature(310.0)                        # K (slightly subcooled)
-    feed_obj.SetPressure(202650.0)                        # 2 atm [Pa]
-    feed_obj.SetMolarFlow(100.0)                          # 100 mol/s basis
-    feed_obj.SpecType = 0
+    feed_obj = _cast_to_stream(sim, "FEED_D")
+    composition = System.Array[float]([0.5, 0.5])
+    feed_obj.SetOverallComposition(composition)            
+    feed_obj.SetTemperature(310.0)                        
+    feed_obj.SetPressure(202650.0)                        
+    feed_obj.SetMolarFlow(100.0)                          
+    _set_enum(feed_obj, "SpecType", 0)
 
-    # Distillation column
-    col = sim.AddObject("DistillationColumn", 350, 300, "COL1")
-    col_obj = sim.GetFlowsheetSimulationObject("COL1")
-
+    col_obj = sim.GetFlowsheetSimulationObject("COL1").GetAsObject()
     col_obj.NumberOfStages = n_stages
     col_obj.FeedStage = feed_stage
     col_obj.RefluxRatio = reflux_ratio
-    # 4th spec: distillate-to-feed molar ratio
-    col_obj.DistillateFlowSpec = distillate_rate * 100.0  # mol/s
+    col_obj.DistillateFlowSpec = distillate_rate * 100.0  
 
-    col_obj.CondenserType = 0    # total condenser
-    col_obj.ReboilerType  = 0    # kettle reboiler
+    _set_enum(col_obj, "CondenserType", 0)    
+    _set_enum(col_obj, "ReboilerType", 0)    
 
-    # Connections
-    sim.ConnectObjects(feed, col, -1, 0)   # feed → column feed inlet
-    sim.ConnectObjects(col, dist, 0, -1)   # column distillate → stream
-    sim.ConnectObjects(col, bott, 1, -1)   # column bottoms → stream
+    # ── Safe Graphic Connections ──
+    _connect(sim, "FEED_D", "COL1", -1, 0)   
+    _connect(sim, "COL1", "DISTILLATE", 0, -1)   
+    _connect(sim, "COL1", "BOTTOMS", 1, -1)   
 
     return sim
 
 
-def extract_distil_results(sim, n_stages, feed_stage, reflux_ratio,
+def extract_distil_results(interf, sim, n_stages, feed_stage, reflux_ratio,
                             distillate_rate) -> dict:
-    """Run the distillation flowsheet and extract KPIs."""
     result = {
         "part": "Distillation",
         "n_stages": n_stages,
@@ -325,11 +352,15 @@ def extract_distil_results(sim, n_stages, feed_stage, reflux_ratio,
         "reboiler_duty_W": float("nan"),
     }
     try:
-        sim.SolveFlowsheet()
+        # ── API FIX: Use interf for correct calculation ──
+        if hasattr(interf, 'CalculateFlowsheet2'):
+            interf.CalculateFlowsheet2(sim)
+        else:
+            sim.RequestCalculation()
 
-        dist_obj = sim.GetFlowsheetSimulationObject("DISTILLATE")
-        bott_obj = sim.GetFlowsheetSimulationObject("BOTTOMS")
-        col_obj  = sim.GetFlowsheetSimulationObject("COL1")
+        dist_obj = _cast_to_stream(sim, "DISTILLATE")
+        bott_obj = _cast_to_stream(sim, "BOTTOMS")
+        col_obj  = sim.GetFlowsheetSimulationObject("COL1").GetAsObject()
 
         result.update({
             "success": True,
@@ -346,20 +377,16 @@ def extract_distil_results(sim, n_stages, feed_stage, reflux_ratio,
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 5.  PART C – PARAMETRIC SWEEPS
+# 5.  PARAMETRIC SWEEPS CONFIG
 # ─────────────────────────────────────────────────────────────────────────────
 
-# PFR sweep ranges
-PFR_VOLUMES   = [0.5, 1.0, 2.0, 5.0, 10.0]      # m³
-PFR_TEMPS     = [350.0, 380.0, 410.0, 440.0]     # K
+PFR_VOLUMES   = [0.5, 1.0, 2.0, 5.0, 10.0]      
+PFR_TEMPS     = [350.0, 380.0, 410.0, 440.0]     
 
-# Distillation sweep ranges
 DISTIL_STAGES  = [10, 15, 20, 25]
 DISTIL_REFLUX  = [1.0, 1.5, 2.0, 3.0]
-
-# Fixed distillation parameters (held constant during sweep)
-DISTIL_FEED_STAGE      = 8       # feed stage (middle-ish)
-DISTIL_DISTILLATE_RATE = 0.50   # 50 % of feed as distillate
+DISTIL_FEED_STAGE      = 8       
+DISTIL_DISTILLATE_RATE = 0.50   
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -367,29 +394,21 @@ DISTIL_DISTILLATE_RATE = 0.50   # 50 % of feed as distillate
 # ─────────────────────────────────────────────────────────────────────────────
 
 CSV_FIELDNAMES = [
-    # Metadata
     "timestamp", "part", "case_id",
-    # PFR sweep variables
     "volume_m3", "feed_temp_K",
-    # Distillation sweep variables
     "n_stages", "feed_stage", "reflux_ratio", "distillate_rate",
-    # Status
     "success", "error",
-    # PFR KPIs
     "conversion", "outlet_nC5_molflow", "outlet_iC5_molflow",
     "heat_duty_W", "outlet_temp_K",
-    # Distillation KPIs
     "distillate_iC5_purity", "bottoms_nC5_purity",
     "condenser_duty_W", "reboiler_duty_W",
 ]
-
 
 def write_csv(rows: list, path: str = "results.csv"):
     with open(path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES, extrasaction="ignore")
         writer.writeheader()
         for row in rows:
-            # Fill missing keys with empty string
             full_row = {k: "" for k in CSV_FIELDNAMES}
             full_row.update(row)
             writer.writerow(full_row)
@@ -408,7 +427,6 @@ def make_plots(all_results: list):
     pfr_rows   = [r for r in all_results if r["part"] == "PFR"          and r["success"]]
     dist_rows  = [r for r in all_results if r["part"] == "Distillation" and r["success"]]
 
-    # ── Plot 1: PFR Conversion vs Volume for each Temperature ────────────────
     if pfr_rows:
         fig, axes = plt.subplots(1, 2, figsize=(12, 5))
         fig.suptitle("PFR Parametric Sweep – n-C5 Isomerization", fontsize=13)
@@ -417,44 +435,25 @@ def make_plots(all_results: list):
         colors = plt.cm.plasma([i / max(len(temps) - 1, 1) for i in range(len(temps))])
 
         for temp, color in zip(temps, colors):
-            subset = sorted(
-                [r for r in pfr_rows if r["feed_temp_K"] == temp],
-                key=lambda x: x["volume_m3"],
-            )
+            subset = sorted([r for r in pfr_rows if r["feed_temp_K"] == temp], key=lambda x: x["volume_m3"])
             vols = [r["volume_m3"]  for r in subset]
             conv = [r["conversion"] for r in subset]
             axes[0].plot(vols, conv, marker="o", label=f"T={int(temp)} K", color=color)
 
-        axes[0].set_xlabel("Reactor Volume (m³)")
-        axes[0].set_ylabel("n-C5 Conversion")
-        axes[0].set_title("Conversion vs Volume")
-        axes[0].legend()
-        axes[0].grid(True, alpha=0.3)
+        axes[0].set_xlabel("Reactor Volume (m³)"); axes[0].set_ylabel("n-C5 Conversion"); axes[0].legend(); axes[0].grid(True, alpha=0.3)
 
-        # Plot 2: Conversion vs Temperature for each Volume
         vols_u = sorted(set(r["volume_m3"] for r in pfr_rows))
         colors2 = plt.cm.viridis([i / max(len(vols_u) - 1, 1) for i in range(len(vols_u))])
         for vol, color in zip(vols_u, colors2):
-            subset = sorted(
-                [r for r in pfr_rows if r["volume_m3"] == vol],
-                key=lambda x: x["feed_temp_K"],
-            )
+            subset = sorted([r for r in pfr_rows if r["volume_m3"] == vol], key=lambda x: x["feed_temp_K"])
             temps2 = [r["feed_temp_K"] for r in subset]
             conv   = [r["conversion"]  for r in subset]
             axes[1].plot(temps2, conv, marker="s", label=f"V={vol} m³", color=color)
 
-        axes[1].set_xlabel("Feed Temperature (K)")
-        axes[1].set_ylabel("n-C5 Conversion")
-        axes[1].set_title("Conversion vs Temperature")
-        axes[1].legend()
-        axes[1].grid(True, alpha=0.3)
-
-        plt.tight_layout()
-        plt.savefig("pfr_sweep.png", dpi=150, bbox_inches="tight")
-        plt.close()
+        axes[1].set_xlabel("Feed Temperature (K)"); axes[1].set_ylabel("n-C5 Conversion"); axes[1].legend(); axes[1].grid(True, alpha=0.3)
+        plt.tight_layout(); plt.savefig("pfr_sweep.png", dpi=150, bbox_inches="tight"); plt.close()
         log.info("Saved pfr_sweep.png")
 
-    # ── Plot 3 & 4: Distillation purities ────────────────────────────────────
     if dist_rows:
         fig, axes = plt.subplots(1, 2, figsize=(12, 5))
         fig.suptitle("Distillation Parametric Sweep – n-C5 / i-C5 Separation", fontsize=13)
@@ -463,38 +462,21 @@ def make_plots(all_results: list):
         colors = plt.cm.coolwarm([i / max(len(stages_u) - 1, 1) for i in range(len(stages_u))])
 
         for ns, color in zip(stages_u, colors):
-            subset = sorted(
-                [r for r in dist_rows if r["n_stages"] == ns],
-                key=lambda x: x["reflux_ratio"],
-            )
+            subset = sorted([r for r in dist_rows if r["n_stages"] == ns], key=lambda x: x["reflux_ratio"])
             rr   = [r["reflux_ratio"]           for r in subset]
             pur  = [r["distillate_iC5_purity"]  for r in subset]
             axes[0].plot(rr, pur, marker="o", label=f"N={ns} stages", color=color)
 
-        axes[0].set_xlabel("Reflux Ratio (L/D)")
-        axes[0].set_ylabel("i-C5 Purity in Distillate (mol frac)")
-        axes[0].set_title("Distillate Purity vs Reflux Ratio")
-        axes[0].legend()
-        axes[0].grid(True, alpha=0.3)
+        axes[0].set_xlabel("Reflux Ratio (L/D)"); axes[0].set_ylabel("i-C5 Purity in Distillate (mol frac)"); axes[0].legend(); axes[0].grid(True, alpha=0.3)
 
         for ns, color in zip(stages_u, colors):
-            subset = sorted(
-                [r for r in dist_rows if r["n_stages"] == ns],
-                key=lambda x: x["reflux_ratio"],
-            )
+            subset = sorted([r for r in dist_rows if r["n_stages"] == ns], key=lambda x: x["reflux_ratio"])
             rr   = [r["reflux_ratio"]        for r in subset]
             pur  = [r["bottoms_nC5_purity"]  for r in subset]
             axes[1].plot(rr, pur, marker="s", label=f"N={ns} stages", color=color)
 
-        axes[1].set_xlabel("Reflux Ratio (L/D)")
-        axes[1].set_ylabel("n-C5 Purity in Bottoms (mol frac)")
-        axes[1].set_title("Bottoms Purity vs Reflux Ratio")
-        axes[1].legend()
-        axes[1].grid(True, alpha=0.3)
-
-        plt.tight_layout()
-        plt.savefig("distil_sweep.png", dpi=150, bbox_inches="tight")
-        plt.close()
+        axes[1].set_xlabel("Reflux Ratio (L/D)"); axes[1].set_ylabel("n-C5 Purity in Bottoms (mol frac)"); axes[1].legend(); axes[1].grid(True, alpha=0.3)
+        plt.tight_layout(); plt.savefig("distil_sweep.png", dpi=150, bbox_inches="tight"); plt.close()
         log.info("Saved distil_sweep.png")
 
 
@@ -508,16 +490,12 @@ def main():
     log.info(f"Run timestamp: {datetime.now().isoformat()}")
     log.info("=" * 65)
 
-    # ── Bootstrap DWSIM ───────────────────────────────────────────────────────
     dwsim_path = find_dwsim_path()
     interf = load_dwsim(dwsim_path)
 
     all_results = []
     case_id = 0
 
-    # ════════════════════════════════════════════════════════════════════════
-    # PART A + C (PFR) – Parametric Sweep
-    # ════════════════════════════════════════════════════════════════════════
     log.info("\n--- Part A/C: PFR Parametric Sweep ---")
     pfr_combos = list(itertools.product(PFR_VOLUMES, PFR_TEMPS))
     log.info(f"  Total PFR cases: {len(pfr_combos)}")
@@ -527,7 +505,8 @@ def main():
         log.info(f"  Case {case_id}: V={volume} m³, T={temp} K")
         try:
             sim = build_pfr_flowsheet(interf, volume, temp)
-            row = extract_pfr_results(sim, volume, temp)
+            # ── API FIX: pass interf to extractor ──
+            row = extract_pfr_results(interf, sim, volume, temp)
         except Exception as exc:
             log.error(f"  Case {case_id} build/extract ERROR: {exc}\n{traceback.format_exc()}")
             row = {
@@ -538,15 +517,11 @@ def main():
         row["timestamp"] = datetime.now().isoformat()
         all_results.append(row)
 
-    # ════════════════════════════════════════════════════════════════════════
-    # PART B + C (Distillation) – Parametric Sweep
-    # ════════════════════════════════════════════════════════════════════════
     log.info("\n--- Part B/C: Distillation Parametric Sweep ---")
     dist_combos = list(itertools.product(DISTIL_STAGES, DISTIL_REFLUX))
     log.info(f"  Total Distillation cases: {len(dist_combos)}")
 
     for n_stages, reflux in dist_combos:
-        # Ensure feed stage is within column (middle of rectifying section)
         feed_stage = min(DISTIL_FEED_STAGE, n_stages - 2)
         case_id += 1
         log.info(f"  Case {case_id}: N={n_stages}, feed_stage={feed_stage}, R={reflux}")
@@ -554,8 +529,9 @@ def main():
             sim = build_distil_flowsheet(
                 interf, n_stages, feed_stage, reflux, DISTIL_DISTILLATE_RATE
             )
+            # ── API FIX: pass interf to extractor ──
             row = extract_distil_results(
-                sim, n_stages, feed_stage, reflux, DISTIL_DISTILLATE_RATE
+                interf, sim, n_stages, feed_stage, reflux, DISTIL_DISTILLATE_RATE
             )
         except Exception as exc:
             log.error(f"  Case {case_id} build/extract ERROR: {exc}\n{traceback.format_exc()}")
@@ -569,13 +545,9 @@ def main():
         row["timestamp"] = datetime.now().isoformat()
         all_results.append(row)
 
-    # ── Write CSV ─────────────────────────────────────────────────────────────
     write_csv(all_results)
-
-    # ── Plots ─────────────────────────────────────────────────────────────────
     make_plots(all_results)
 
-    # ── Summary ───────────────────────────────────────────────────────────────
     total   = len(all_results)
     passed  = sum(1 for r in all_results if r.get("success"))
     failed  = total - passed
@@ -585,7 +557,6 @@ def main():
     if PLOT_AVAILABLE:
         log.info("          pfr_sweep.png, distil_sweep.png")
     log.info("=" * 65)
-
 
 if __name__ == "__main__":
     main()

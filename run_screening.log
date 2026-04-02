@@ -1,49 +1,255 @@
-2026-04-02 23:12:47,939 [INFO] =================================================================
-2026-04-02 23:12:47,939 [INFO] FOSSEE DWSIM Automation Screening Task – Starting
-2026-04-02 23:12:47,939 [INFO] =================================================================
-2026-04-02 23:12:47,939 [INFO] DWSIM found at: C:\Users\athar\AppData\Local\DWSIM
-2026-04-02 23:12:58,718 [INFO] Loaded Automation3 interface.
-2026-04-02 23:12:58,718 [INFO] DWSIM Automation interface loaded successfully.
-2026-04-02 23:12:58,718 [INFO] 
+2026-04-03 00:39:34,570 [INFO] =================================================================
+2026-04-03 00:39:34,570 [INFO] FOSSEE DWSIM Automation Screening Task – Starting
+2026-04-03 00:39:34,571 [INFO] Run timestamp: 2026-04-03T00:39:34.571135
+2026-04-03 00:39:34,571 [INFO] =================================================================
+2026-04-03 00:39:34,571 [INFO] DWSIM found at: C:\Users\athar\AppData\Local\DWSIM
+2026-04-03 00:39:36,618 [INFO] DWSIM Automation interface loaded successfully.
+2026-04-03 00:39:36,618 [INFO] 
 --- Part A/C: PFR Parametric Sweep ---
-2026-04-02 23:12:58,718 [INFO]   Case 1: V=0.5 m³, T=350.0 K
-2026-04-02 23:13:03,079 [INFO]   Case 2: V=0.5 m³, T=380.0 K
-2026-04-02 23:13:03,083 [INFO]   Case 3: V=0.5 m³, T=410.0 K
-2026-04-02 23:13:03,088 [INFO]   Case 4: V=0.5 m³, T=440.0 K
-2026-04-02 23:13:03,092 [INFO]   Case 5: V=1.0 m³, T=350.0 K
-2026-04-02 23:13:03,096 [INFO]   Case 6: V=1.0 m³, T=380.0 K
-2026-04-02 23:13:03,101 [INFO]   Case 7: V=1.0 m³, T=410.0 K
-2026-04-02 23:13:03,107 [INFO]   Case 8: V=1.0 m³, T=440.0 K
-2026-04-02 23:13:03,111 [INFO]   Case 9: V=2.0 m³, T=350.0 K
-2026-04-02 23:13:03,115 [INFO]   Case 10: V=2.0 m³, T=380.0 K
-2026-04-02 23:13:03,119 [INFO]   Case 11: V=2.0 m³, T=410.0 K
-2026-04-02 23:13:03,123 [INFO]   Case 12: V=2.0 m³, T=440.0 K
-2026-04-02 23:13:03,128 [INFO]   Case 13: V=5.0 m³, T=350.0 K
-2026-04-02 23:13:03,132 [INFO]   Case 14: V=5.0 m³, T=380.0 K
-2026-04-02 23:13:03,135 [INFO]   Case 15: V=5.0 m³, T=410.0 K
-2026-04-02 23:13:03,139 [INFO]   Case 16: V=5.0 m³, T=440.0 K
-2026-04-02 23:13:03,144 [INFO]   Case 17: V=10.0 m³, T=350.0 K
-2026-04-02 23:13:03,148 [INFO]   Case 18: V=10.0 m³, T=380.0 K
-2026-04-02 23:13:03,152 [INFO]   Case 19: V=10.0 m³, T=410.0 K
-2026-04-02 23:13:03,156 [INFO]   Case 20: V=10.0 m³, T=440.0 K
-2026-04-02 23:13:03,160 [INFO] 
+2026-04-03 00:39:36,618 [INFO]   Total PFR cases: 20
+2026-04-03 00:39:36,619 [INFO]   Case 1: V=0.5 m³, T=350.0 K
+2026-04-03 00:39:37,012 [ERROR]   Case 1 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,013 [INFO]   Case 2: V=0.5 m³, T=380.0 K
+2026-04-03 00:39:37,023 [ERROR]   Case 2 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,024 [INFO]   Case 3: V=0.5 m³, T=410.0 K
+2026-04-03 00:39:37,034 [ERROR]   Case 3 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,034 [INFO]   Case 4: V=0.5 m³, T=440.0 K
+2026-04-03 00:39:37,043 [ERROR]   Case 4 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,044 [INFO]   Case 5: V=1.0 m³, T=350.0 K
+2026-04-03 00:39:37,063 [ERROR]   Case 5 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,063 [INFO]   Case 6: V=1.0 m³, T=380.0 K
+2026-04-03 00:39:37,073 [ERROR]   Case 6 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,074 [INFO]   Case 7: V=1.0 m³, T=410.0 K
+2026-04-03 00:39:37,085 [ERROR]   Case 7 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,085 [INFO]   Case 8: V=1.0 m³, T=440.0 K
+2026-04-03 00:39:37,095 [ERROR]   Case 8 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,095 [INFO]   Case 9: V=2.0 m³, T=350.0 K
+2026-04-03 00:39:37,105 [ERROR]   Case 9 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,105 [INFO]   Case 10: V=2.0 m³, T=380.0 K
+2026-04-03 00:39:37,116 [ERROR]   Case 10 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,116 [INFO]   Case 11: V=2.0 m³, T=410.0 K
+2026-04-03 00:39:37,127 [ERROR]   Case 11 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,127 [INFO]   Case 12: V=2.0 m³, T=440.0 K
+2026-04-03 00:39:37,137 [ERROR]   Case 12 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,137 [INFO]   Case 13: V=5.0 m³, T=350.0 K
+2026-04-03 00:39:37,147 [ERROR]   Case 13 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,147 [INFO]   Case 14: V=5.0 m³, T=380.0 K
+2026-04-03 00:39:37,160 [ERROR]   Case 14 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,160 [INFO]   Case 15: V=5.0 m³, T=410.0 K
+2026-04-03 00:39:37,175 [ERROR]   Case 15 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,175 [INFO]   Case 16: V=5.0 m³, T=440.0 K
+2026-04-03 00:39:37,184 [ERROR]   Case 16 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,185 [INFO]   Case 17: V=10.0 m³, T=350.0 K
+2026-04-03 00:39:37,195 [ERROR]   Case 17 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,196 [INFO]   Case 18: V=10.0 m³, T=380.0 K
+2026-04-03 00:39:37,206 [ERROR]   Case 18 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,207 [INFO]   Case 19: V=10.0 m³, T=410.0 K
+2026-04-03 00:39:37,222 [ERROR]   Case 19 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,223 [INFO]   Case 20: V=10.0 m³, T=440.0 K
+2026-04-03 00:39:37,233 [ERROR]   Case 20 build/extract ERROR: 'Reactor_PFR' object has no attribute 'AddReaction'
+Traceback (most recent call last):
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 507, in main
+    sim = build_pfr_flowsheet(interf, volume, temp)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\dwsim_screening\run_screening.py", line 227, in build_pfr_flowsheet
+    rxn = pfr_obj.AddReaction()
+          ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Reactor_PFR' object has no attribute 'AddReaction'
+
+2026-04-03 00:39:37,233 [INFO] 
 --- Part B/C: Distillation Parametric Sweep ---
-2026-04-02 23:13:03,160 [INFO]   Case 21: N=10, feed_stage=8, R=1.0
-2026-04-02 23:13:03,175 [INFO]   Case 22: N=10, feed_stage=8, R=1.5
-2026-04-02 23:13:03,179 [INFO]   Case 23: N=10, feed_stage=8, R=2.0
-2026-04-02 23:13:03,183 [INFO]   Case 24: N=10, feed_stage=8, R=3.0
-2026-04-02 23:13:03,187 [INFO]   Case 25: N=15, feed_stage=8, R=1.0
-2026-04-02 23:13:03,192 [INFO]   Case 26: N=15, feed_stage=8, R=1.5
-2026-04-02 23:13:03,196 [INFO]   Case 27: N=15, feed_stage=8, R=2.0
-2026-04-02 23:13:03,200 [INFO]   Case 28: N=15, feed_stage=8, R=3.0
-2026-04-02 23:13:03,204 [INFO]   Case 29: N=20, feed_stage=8, R=1.0
-2026-04-02 23:13:03,208 [INFO]   Case 30: N=20, feed_stage=8, R=1.5
-2026-04-02 23:13:03,213 [INFO]   Case 31: N=20, feed_stage=8, R=2.0
-2026-04-02 23:13:03,217 [INFO]   Case 32: N=20, feed_stage=8, R=3.0
-2026-04-02 23:13:03,221 [INFO]   Case 33: N=25, feed_stage=8, R=1.0
-2026-04-02 23:13:03,226 [INFO]   Case 34: N=25, feed_stage=8, R=1.5
-2026-04-02 23:13:03,230 [INFO]   Case 35: N=25, feed_stage=8, R=2.0
-2026-04-02 23:13:03,236 [INFO]   Case 36: N=25, feed_stage=8, R=3.0
-2026-04-02 23:13:03,240 [INFO] Results written to results.csv  (36 rows)
-2026-04-02 23:13:03,241 [INFO] 
-SUMMARY: 36 cases | 0 succeeded
+2026-04-03 00:39:37,233 [INFO]   Total Distillation cases: 16
+2026-04-03 00:39:37,233 [INFO]   Case 21: N=10, feed_stage=8, R=1.0
+2026-04-03 00:39:39,411 [INFO]   Case 22: N=10, feed_stage=8, R=1.5
+2026-04-03 00:39:39,420 [INFO]   Case 23: N=10, feed_stage=8, R=2.0
+2026-04-03 00:39:39,431 [INFO]   Case 24: N=10, feed_stage=8, R=3.0
+2026-04-03 00:39:39,441 [INFO]   Case 25: N=15, feed_stage=8, R=1.0
+2026-04-03 00:39:39,448 [INFO]   Case 26: N=15, feed_stage=8, R=1.5
+2026-04-03 00:39:39,457 [INFO]   Case 27: N=15, feed_stage=8, R=2.0
+2026-04-03 00:39:39,468 [INFO]   Case 28: N=15, feed_stage=8, R=3.0
+2026-04-03 00:39:39,476 [INFO]   Case 29: N=20, feed_stage=8, R=1.0
+2026-04-03 00:39:39,484 [INFO]   Case 30: N=20, feed_stage=8, R=1.5
+2026-04-03 00:39:39,494 [INFO]   Case 31: N=20, feed_stage=8, R=2.0
+2026-04-03 00:39:39,516 [INFO]   Case 32: N=20, feed_stage=8, R=3.0
+2026-04-03 00:39:39,524 [INFO]   Case 33: N=25, feed_stage=8, R=1.0
+2026-04-03 00:39:39,534 [INFO]   Case 34: N=25, feed_stage=8, R=1.5
+2026-04-03 00:39:39,550 [INFO]   Case 35: N=25, feed_stage=8, R=2.0
+2026-04-03 00:39:39,558 [INFO]   Case 36: N=25, feed_stage=8, R=3.0
+2026-04-03 00:39:39,567 [INFO] Results written to results.csv  (36 rows)
+2026-04-03 00:39:39,568 [INFO] matplotlib not available – skipping plots.
+2026-04-03 00:39:39,568 [INFO] 
+=================================================================
+2026-04-03 00:39:39,568 [INFO] SUMMARY:  36 cases run |  16 succeeded |  20 failed
+2026-04-03 00:39:39,568 [INFO] Outputs:  results.csv, run_screening.log
+2026-04-03 00:39:39,568 [INFO] =================================================================
