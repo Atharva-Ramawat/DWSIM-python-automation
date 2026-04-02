@@ -1,0 +1,49 @@
+2026-04-02 23:12:47,939 [INFO] =================================================================
+2026-04-02 23:12:47,939 [INFO] FOSSEE DWSIM Automation Screening Task – Starting
+2026-04-02 23:12:47,939 [INFO] =================================================================
+2026-04-02 23:12:47,939 [INFO] DWSIM found at: C:\Users\athar\AppData\Local\DWSIM
+2026-04-02 23:12:58,718 [INFO] Loaded Automation3 interface.
+2026-04-02 23:12:58,718 [INFO] DWSIM Automation interface loaded successfully.
+2026-04-02 23:12:58,718 [INFO] 
+--- Part A/C: PFR Parametric Sweep ---
+2026-04-02 23:12:58,718 [INFO]   Case 1: V=0.5 m³, T=350.0 K
+2026-04-02 23:13:03,079 [INFO]   Case 2: V=0.5 m³, T=380.0 K
+2026-04-02 23:13:03,083 [INFO]   Case 3: V=0.5 m³, T=410.0 K
+2026-04-02 23:13:03,088 [INFO]   Case 4: V=0.5 m³, T=440.0 K
+2026-04-02 23:13:03,092 [INFO]   Case 5: V=1.0 m³, T=350.0 K
+2026-04-02 23:13:03,096 [INFO]   Case 6: V=1.0 m³, T=380.0 K
+2026-04-02 23:13:03,101 [INFO]   Case 7: V=1.0 m³, T=410.0 K
+2026-04-02 23:13:03,107 [INFO]   Case 8: V=1.0 m³, T=440.0 K
+2026-04-02 23:13:03,111 [INFO]   Case 9: V=2.0 m³, T=350.0 K
+2026-04-02 23:13:03,115 [INFO]   Case 10: V=2.0 m³, T=380.0 K
+2026-04-02 23:13:03,119 [INFO]   Case 11: V=2.0 m³, T=410.0 K
+2026-04-02 23:13:03,123 [INFO]   Case 12: V=2.0 m³, T=440.0 K
+2026-04-02 23:13:03,128 [INFO]   Case 13: V=5.0 m³, T=350.0 K
+2026-04-02 23:13:03,132 [INFO]   Case 14: V=5.0 m³, T=380.0 K
+2026-04-02 23:13:03,135 [INFO]   Case 15: V=5.0 m³, T=410.0 K
+2026-04-02 23:13:03,139 [INFO]   Case 16: V=5.0 m³, T=440.0 K
+2026-04-02 23:13:03,144 [INFO]   Case 17: V=10.0 m³, T=350.0 K
+2026-04-02 23:13:03,148 [INFO]   Case 18: V=10.0 m³, T=380.0 K
+2026-04-02 23:13:03,152 [INFO]   Case 19: V=10.0 m³, T=410.0 K
+2026-04-02 23:13:03,156 [INFO]   Case 20: V=10.0 m³, T=440.0 K
+2026-04-02 23:13:03,160 [INFO] 
+--- Part B/C: Distillation Parametric Sweep ---
+2026-04-02 23:13:03,160 [INFO]   Case 21: N=10, feed_stage=8, R=1.0
+2026-04-02 23:13:03,175 [INFO]   Case 22: N=10, feed_stage=8, R=1.5
+2026-04-02 23:13:03,179 [INFO]   Case 23: N=10, feed_stage=8, R=2.0
+2026-04-02 23:13:03,183 [INFO]   Case 24: N=10, feed_stage=8, R=3.0
+2026-04-02 23:13:03,187 [INFO]   Case 25: N=15, feed_stage=8, R=1.0
+2026-04-02 23:13:03,192 [INFO]   Case 26: N=15, feed_stage=8, R=1.5
+2026-04-02 23:13:03,196 [INFO]   Case 27: N=15, feed_stage=8, R=2.0
+2026-04-02 23:13:03,200 [INFO]   Case 28: N=15, feed_stage=8, R=3.0
+2026-04-02 23:13:03,204 [INFO]   Case 29: N=20, feed_stage=8, R=1.0
+2026-04-02 23:13:03,208 [INFO]   Case 30: N=20, feed_stage=8, R=1.5
+2026-04-02 23:13:03,213 [INFO]   Case 31: N=20, feed_stage=8, R=2.0
+2026-04-02 23:13:03,217 [INFO]   Case 32: N=20, feed_stage=8, R=3.0
+2026-04-02 23:13:03,221 [INFO]   Case 33: N=25, feed_stage=8, R=1.0
+2026-04-02 23:13:03,226 [INFO]   Case 34: N=25, feed_stage=8, R=1.5
+2026-04-02 23:13:03,230 [INFO]   Case 35: N=25, feed_stage=8, R=2.0
+2026-04-02 23:13:03,236 [INFO]   Case 36: N=25, feed_stage=8, R=3.0
+2026-04-02 23:13:03,240 [INFO] Results written to results.csv  (36 rows)
+2026-04-02 23:13:03,241 [INFO] 
+SUMMARY: 36 cases | 0 succeeded
