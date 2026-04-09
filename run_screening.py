@@ -49,24 +49,30 @@ log = logging.getLogger(__name__)
 # 1.  DWSIM AUTOMATION BOOTSTRAP
 # ─────────────────────────────────────────────────────────────────────────────
 
-def find_dwsim_path():
-    """Return the path to the DWSIM installation directory."""
+def find_dwsim_path() -> str:
+    """
+    Scans standard and local installation directories to find the DWSIM path.
+    Returns the valid path as a string.
+    Raises an EnvironmentError if DWSIM cannot be located.
+    """
     candidates = [
         r"C:\Users\Public\DWSIM8",
         r"C:\Program Files\DWSIM8",
         r"C:\Program Files (x86)\DWSIM8",
         r"C:\Users\Public\DWSIM7",
         r"C:\Program Files\DWSIM7",
-        r"C:\Users\athar\AppData\Local\DWSIM", # Confirmed path
+        r"C:\Users\athar\AppData\Local\DWSIM",  # Confirmed local path
         os.environ.get("DWSIM_HOME", ""),
         "/opt/dwsim8",
         "/usr/local/dwsim8",
         os.path.expanduser("~/dwsim8"),
     ]
+    
     for p in candidates:
         if p and os.path.isdir(p):
             log.info(f"DWSIM found at: {p}")
             return p
+            
     raise EnvironmentError(
         "DWSIM installation not found. Set the DWSIM_HOME environment variable "
         "or install DWSIM to a standard location."
