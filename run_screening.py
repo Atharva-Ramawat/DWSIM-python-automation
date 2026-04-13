@@ -10,7 +10,7 @@ Description:
         Part B - Simulate a Distillation Column separating n-pentane / isopentane
         Part C - Perform parametric sweeps over key variables
 
-    All results are written to results.csv. No GUI is launched.
+    All results  are written to results.csv. No GUI is launched.
 """
 
 import sys
