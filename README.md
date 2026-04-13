@@ -1,7 +1,7 @@
 # DWSIM Python Automation - FOSSEE Screening Task 2026
 
 ## 🚀 Project Overview
-This project provides a robust Python automation framework for **DWSIM**, built using the Automation3 interface and `pythonnet`. It was developed as a screening task for the FOSSEE Summer Fellowship 2026.
+This project  provides a robust Python automation framework for **DWSIM**, built using the Automation3 interface and `pythonnet`. It was developed as a screening task for the FOSSEE Summer Fellowship 2026.
 
 The suite programmatically constructs chemical flowsheets, performs multi-variable parametric sweeps, and extracts Key Performance Indicators (KPIs) into a structured CSV format—all without opening the DWSIM GUI.
 
