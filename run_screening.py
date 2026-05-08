@@ -1,6 +1,6 @@
 """
 FOSSEE Summer Fellowship 2026 - DWSIM Python Automation Screening Task
-Task 1: Python Automation of DWSI
+Task 1: Python Automation of DWSIM
 
 Author: Atharva Ramawat
 Description:
