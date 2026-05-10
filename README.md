@@ -12,7 +12,7 @@ The suite programmatically constructs chemical flowsheets, performs multi-variab
 * **Smart Enum Parsing:** Version-agnostic object creation using C# Reflection.
 * **Data Export:** Automated generation of `results.csv` and visualization plots.
 
-## 🛠️ Requirement
+## 🛠️ Requirements
 * DWSIM 8.0+
 * Python 3.12 (Standard Windows installation)
 * Dependencies: `pythonnet`, `matplotlib`
