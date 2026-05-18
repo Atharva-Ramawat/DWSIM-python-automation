@@ -21,8 +21,6 @@ import itertools
 import logging
 from datetime import datetime
 
-# ── Safe Path Setup ──────────────────────────────────────────────────────────
-# Guarantees outputs are saved next to the script, even after changing directories
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ── Optional: matplotlib for plots (won't crash if unavailable) ─────────────
