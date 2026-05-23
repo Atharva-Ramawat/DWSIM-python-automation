@@ -23,7 +23,6 @@ from datetime import datetime
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# ── Optional: matplotlib for plots (won't crash if unavailable) ─────────────
 try:
     import matplotlib
     matplotlib.use("Agg")          # headless backend – no display needed
@@ -32,7 +31,6 @@ try:
 except ImportError:
     PLOT_AVAILABLE = False
 
-# ── Logging setup ────────────────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -44,9 +42,6 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 1.  DWSIM AUTOMATION BOOTSTRAP
-# ─────────────────────────────────────────────────────────────────────────────
 
 def find_dwsim_path() -> str:
     """
@@ -60,7 +55,7 @@ def find_dwsim_path() -> str:
         r"C:\Program Files (x86)\DWSIM8",
         r"C:\Users\Public\DWSIM7",
         r"C:\Program Files\DWSIM7",
-        r"C:\Users\athar\AppData\Local\DWSIM",  # Confirmed local path
+        r"C:\Users\athar\AppData\Local\DWSIM",  
         os.environ.get("DWSIM_HOME", ""),
         "/opt/dwsim8",
         "/usr/local/dwsim8",
@@ -90,7 +85,6 @@ def load_dwsim(dwsim_path: str):
             "pythonnet is not installed. Run:  pip install pythonnet"
         )
 
-    # Change directory so DWSIM finds its thermo files
     os.chdir(dwsim_path)
     sys.path.append(dwsim_path)
     import clr as clr_inner
