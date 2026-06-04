@@ -25,7 +25,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 try:
     import matplotlib
-    matplotlib.use("Agg")          # headless backend – no display needed
+    matplotlib.use("Agg")         
     import matplotlib.pyplot as plt
     PLOT_AVAILABLE = True
 except ImportError:
