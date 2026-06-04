@@ -105,7 +105,7 @@ def load_dwsim(dwsim_path: str):
         except Exception:
             log.warning(f"Could not load DLL: {dll} – continuing anyway.")
 
-    from DWSIM.Automation import Automation3  # type: ignore
+    from DWSIM.Automation import Automation3  
     interf = Automation3()
     log.info("DWSIM Automation interface loaded successfully.")
     return interf
