@@ -111,10 +111,6 @@ def load_dwsim(dwsim_path: str):
     return interf
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 2.  HELPER – UNIT CONVERSIONS, SAFE GETTERS & OBJECT CASTING
-# ─────────────────────────────────────────────────────────────────────────────
-
 def _safe(val, default=float("nan")):
     try:
         return float(val) if val is not None else default
