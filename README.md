@@ -5,7 +5,7 @@ This project  provides a robust Python automation framework for **DWSIM**, built
 
 The suite programmatically constructs chemical flowsheets, performs multi-variable parametric sweeps, and extracts Key Performance Indicators (KPIs) into a structured CSV format—all without opening the DWSIM GUI.
 
-## ✨ Key 
+## ✨ Key features 
 * **Headless Execution:** Full background simulation using the DWSIM Automation API.
 * **Parametric Sweeps:** * **Reactor (PFR):** Conversion analysis across multiple volumes and temperatures.
   * **Distillation:** Purity and energy duty analysis across various stages and reflux ratios.
